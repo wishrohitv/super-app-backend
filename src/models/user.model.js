@@ -2,30 +2,58 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const userSchema = new Schema({
-  name: {
-    type: String,
+const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+      trim: true,
+      minlength: 3,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
+    },
+    password: {
+      type: String,
+      required: function () {
+        return this.provider === "local";
+      },
+    },
+    avatar: {
+      public_id: {
+        type: String,
+        default: null,
+      },
+      url: {
+        type: String,
+        default: null,
+      },
+    },
+    provider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local",
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true,
-  },
-  password: {
-    type: String,
-  },
-  avatar: {
-    public_id: String,
-    url: String,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;

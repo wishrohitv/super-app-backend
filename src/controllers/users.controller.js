@@ -1,5 +1,9 @@
 import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { google } from "googleapis";
+import crypto from "crypto";
+import url from "url";
+
 import {
   ConflictError,
   BadRequestError,
@@ -7,36 +11,9 @@ import {
 } from "../utils/AppErrors.js";
 import { SuccessResponse } from "../utils/AppResponse.js";
 
-const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
-
-  if (!username || !email || !password) {
-    throw new BadRequestError("Username, email, and password are required");
-  }
-
-  const existingUser = await User.findOne({
-    $or: [{ username }, { email }],
-  });
-
-  if (existingUser) {
-    throw new ConflictError(
-      "User with the same username or email already exists"
-    );
-  }
-  const user = await User.create({
-    username,
-    email,
-    password,
-  });
-
-  const createdUser = await User.findById(user._id).select("-password");
-
-  res
-    .status(201)
-    .json(
-      new SuccessResponse(200, createdUser, "User registered successfully")
-    );
-});
+const tokenOptions = {
+  samesite: false,
+};
 
 const userProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
@@ -55,4 +32,4 @@ const userProfile = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, userProfile };
+export { userProfile };
