@@ -62,13 +62,13 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-userSchema.method.isPasswordMatch = function (password) {
+userSchema.methods.isPasswordMatch = function (password) {
   let _password = this.password;
   if (!password) return false;
   return bcrypt.compare(password, _password);
 };
 
-userSchema.method.generateAccessToken = function () {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       id: this._id,
@@ -80,7 +80,7 @@ userSchema.method.generateAccessToken = function () {
   );
 };
 
-userSchema.method.generateRefreshToken = function () {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
