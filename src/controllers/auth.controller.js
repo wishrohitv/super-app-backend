@@ -269,4 +269,19 @@ const oAuthCallback = asyncHandler(async (req, res) => {
     .redirect(process.env.GOOGLE_OAUTH_REDIRECT_AFTER_SIGNIN_URI);
 });
 
-export { registerUser, loginUser, refreshToken, oAuthGoogle, oAuthCallback };
+const getCurrentUser = asyncHandler(async (req, res) => {
+  res
+    .status(200)
+    .json(
+      new SuccessResponse(200, req.user, "Current user retrieved successfully")
+    );
+});
+
+export {
+  registerUser,
+  loginUser,
+  refreshToken,
+  oAuthGoogle,
+  oAuthCallback,
+  getCurrentUser,
+};

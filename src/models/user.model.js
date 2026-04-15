@@ -49,6 +49,16 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    accountStatus: {
+      type: String,
+      enum: ["active", "banned", "suspended", "deactivated"],
+      default: "active",
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
   },
   {
     timestamps: true,
@@ -71,7 +81,7 @@ userSchema.methods.isPasswordMatch = function (password) {
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
-      id: this._id,
+      _id: this._id,
       username: this.username,
       email: this.email,
     },
