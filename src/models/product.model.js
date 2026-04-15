@@ -12,6 +12,12 @@ const productSchema = new Schema({
     type: Number,
     min: 0,
   },
+  category: {
+    type: String,
+  },
+  subCategory: {
+    type: String,
+  },
 });
 
 export const Product = mongoose.model("Product", productSchema);
