@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const reviewHistorySchema = new Schema(
   {
@@ -6,21 +6,19 @@ const reviewHistorySchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Review",
       required: true,
+      index: true, // Index for efficient querying by reviewId
     },
     text: {
       type: String,
       required: true,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: null, // Set to null when the review is created, updated when the review is edited
-    },
   },
   {
     timestamps: true,
   }
+);
+
+export const ReviewHistory = mongoose.model(
+  "ReviewHistory",
+  reviewHistorySchema
 );
