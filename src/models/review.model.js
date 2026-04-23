@@ -20,7 +20,7 @@ const reviewSchema = new Schema(
       max: 5,
       index: true,
     },
-    comment: {
+    text: {
       type: String,
       maxlength: 500,
       required: true,
@@ -63,6 +63,15 @@ const reviewSchema = new Schema(
         uploaded_at: { type: Date, default: Date.now },
       },
     ],
+    isEdited: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true, // Index for efficient querying of non-deleted reviews
+    },
   },
   {
     timestamps: true,

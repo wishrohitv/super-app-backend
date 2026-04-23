@@ -134,8 +134,17 @@ const updateProductPrice = asyncHandler(async (req, res) => {
     .json(new SuccessResponse(200, updatedProduct, "Product price updated"));
 });
 
+const getProductById = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new NotFoundError("Product not found");
+  }
+
+  res.status(200).json(new SuccessResponse(200, product, "Product details"));
+});
 const getAllProducts = asyncHandler(async (req, res) => {});
-const getProductById = asyncHandler(async (req, res) => {});
 const deleteProduct = asyncHandler(async (req, res) => {});
 
 const searchProducts = asyncHandler(async (req, res) => {});
@@ -144,8 +153,8 @@ export {
   createProduct,
   updateProduct,
   updateProductPrice,
-  getAllProducts,
   getProductById,
+  getAllProducts,
   deleteProduct,
   searchProducts,
 };
