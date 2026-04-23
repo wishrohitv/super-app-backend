@@ -1,8 +1,9 @@
 import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 const priceHistorySchema = new Schema(
   {
-    product: {
+    productId: {
       type: Schema.Types.ObjectId,
       ref: "Product",
       required: true,
@@ -28,6 +29,6 @@ const priceHistorySchema = new Schema(
 );
 
 // Compound Index: Speeds up finding the price for a specific product at a specific time
-priceHistorySchema.index({ product: 1, startDate: -1, endDate: 1 });
+priceHistorySchema.index({ productId: 1, startDate: -1, endDate: 1 });
 
 export const PriceHistory = mongoose.model("PriceHistory", priceHistorySchema);

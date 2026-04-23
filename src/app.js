@@ -28,10 +28,13 @@ app.use(
 // Import routes
 import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
+import productRouter from "./routes/product.route.js";
 
 // Register routes
 app.use("/api/v1/auth", authRouter);
 
 app.use("/api/v1/users", userRouter);
+
+app.use("/api/v1/products", productRouter);
 
 export default app;
