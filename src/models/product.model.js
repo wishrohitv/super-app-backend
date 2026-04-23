@@ -8,14 +8,15 @@ const productSchema = new Schema({
   description: {
     type: String,
   },
-  price: {
+  currentPrice: {
     type: Number,
+    required: true,
     min: 0,
   },
   category: {
     type: String,
   },
-  subCategory: {
+  subcategory: {
     type: String,
   },
 });

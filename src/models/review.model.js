@@ -3,7 +3,7 @@ import { Schema } from "mongoose";
 
 const reviewSchema = new Schema(
   {
-    product: {
+    productId: {
       type: Schema.Types.ObjectId,
       ref: "Product",
       required: true,
