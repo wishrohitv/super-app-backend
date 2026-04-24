@@ -14,8 +14,10 @@ const router = Router();
 router.post(
   "/create/:productId",
   verifyJWT,
-  upload.array("review-files", 5),
+  upload.array("reviewFiles", 5),
   createReview
 );
+
+router.put("/update/:reviewId", verifyJWT, upload.none(), updateReview);
 
 export default router;

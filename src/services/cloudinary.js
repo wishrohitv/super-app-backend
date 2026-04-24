@@ -5,26 +5,36 @@ cloudinary.config({
   secure: true,
 });
 
-const uploadFiles = async (files) => {
-  try {
-    // Use the uploaded file's name as the asset's public ID and
-    // allow overwriting the asset with new versions
-    const options = {
-      use_filename: true,
-      unique_filename: false,
-      overwrite: true,
-    };
+const uploadFiles = async (filePath) => {
+  if (!filePath) throw new Error("File path is required for upload");
+  // Use the uploaded file's name as the asset's public ID and
+  // allow overwriting the asset with new versions
+  const options = {
+    use_filename: true,
+    unique_filename: false,
+    overwrite: true,
+  };
 
-    try {
-      // Upload the image
-      const result = await cloudinary.uploader.upload(imagePath, options);
-      console.log(result);
-      return result;
-    } catch (error) {
-      console.error(error);
-    }
+  try {
+    // Upload the image
+    const result = await cloudinary.uploader.upload(filePath, options);
+    fs.unlinkSync(filePath);
+    return result;
   } catch (error) {
-    console.error("Error uploading files to Cloudinary:", error);
+    fs.unlinkSync(filePath);
+    console.error(error);
     throw error;
   }
 };
+
+const deleteFile = async (publicId) => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export { uploadFiles, deleteFile };
