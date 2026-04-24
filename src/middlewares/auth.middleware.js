@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { UnauthorizedError, BadRequestError } from "../utils/AppErrors.js";
 import jwt from "jsonwebtoken";
 
 const verifyJWT = asyncHandler(async (req, _, next) => {
@@ -8,15 +9,21 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
     _accessToken = req.headers["x-access-token"];
   }
   if (!_accessToken) {
-    throw new BadRequestError("Access token is required");
+    throw new UnauthorizedError("Access token is required");
   }
 
-  const decodedToken = jwt.verify(
-    _accessToken,
-    process.env.ACCESS_TOKEN_SECRET
-  );
-  if (!decodedToken) {
-    throw new BadRequestError("Invalid access token");
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(_accessToken, process.env.ACCESS_TOKEN_SECRET);
+  } catch (error) {
+    throw new UnauthorizedError(
+      "Invalid expired access token, please login again"
+    );
+  }
+  if (!decodedToken?._id) {
+    throw new UnauthorizedError(
+      "Invalid access token payload, please login again"
+    );
   }
 
   const user = await User.findById(decodedToken._id).select("-password");
