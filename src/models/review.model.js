@@ -25,18 +25,6 @@ const reviewSchema = new Schema(
       maxlength: 500,
       required: true,
     },
-    upvotes: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    downvotes: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
     uploadedfile: [
       {
         // The main, direct link to the asset
