@@ -1,5 +1,6 @@
 import { Review } from "../models/review.model.js";
 import { ReviewHistory } from "../models/reviewhistory.model.js";
+import { ReviewVote } from "../models/reviewvotes.model.js";
 import {
   NotFoundError,
   RequestTimeoutError,
@@ -168,6 +169,78 @@ const getReviewById = asyncHandler(async (req, res) => {
     .status(200)
     .json(new SuccessResponse(200, review, "Review retrieved successfully"));
 });
+
+const reviewVote = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { reviewId } = req.params;
+  const { voteType } = req.query; // 'upvote' or 'downvote'
+
+  if (!["upvote", "downvote"].includes(voteType)) {
+    throw new BadRequestError("Invalid vote type");
+  }
+
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    throw new NotFoundError("Review not found");
+  }
+
+  const existingVote = await ReviewVote.findOne({
+    userId,
+    reviewId,
+  });
+
+  let newVote;
+  let statusCode;
+  let message;
+  if (existingVote) {
+    // Check if user has already casted the vote and trying againg then remove the row
+    if (existingVote.vote === 1 && voteType === "upvote") {
+      await existingVote.deleteOne();
+      statusCode = 200;
+      message = "Upvote removed successfully";
+    }
+
+    // Check if user has already casted the vote and trying againg then remove the row
+    else if (existingVote.vote === -1 && voteType === "downvote") {
+      await existingVote.deleteOne();
+      statusCode = 200;
+      message = "Downvote removed successfully";
+    } else {
+      // Delete existing vote
+      await existingVote.deleteOne();
+      // Create new vote
+      newVote = await ReviewVote.create({
+        reviewId,
+        userId,
+        vote: voteType === "upvote" ? 1 : -1,
+      });
+      statusCode = 201;
+      message =
+        voteType === "upvote"
+          ? "Review upvote recorded successfully"
+          : "Review downvote recorded successfully";
+    }
+  } else {
+    // Create new vote
+    newVote = await ReviewVote.create({
+      reviewId,
+      userId,
+      vote: voteType === "upvote" ? 1 : -1,
+    });
+    statusCode = 201;
+    message =
+      voteType === "upvote"
+        ? "Review upvote recorded successfully"
+        : "Review downvote recorded successfully";
+  }
+
+  const vote = {
+    upvote: newVote?.vote === 1 ? true : false,
+    downvote: newVote?.vote === -1 ? true : false,
+  };
+  res.status(statusCode).json(new SuccessResponse(statusCode, vote, message));
+});
+
 const deleteReview = asyncHandler(async (req, res) => {});
 
 export {
@@ -176,4 +249,5 @@ export {
   getReviewById,
   updateReview,
   deleteReview,
+  reviewVote,
 };
