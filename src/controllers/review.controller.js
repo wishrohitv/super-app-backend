@@ -29,7 +29,7 @@ const createReview = asyncHandler(async (req, res) => {
   }
   let storeFileMetadata;
 
-  if (uploadFiles?.length > 0) {
+  if (reviewFiles?.length > 0) {
     const results = await Promise.allSettled(
       reviewFiles.map((file) => uploadFiles(file.path))
     );
