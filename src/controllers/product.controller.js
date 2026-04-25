@@ -8,9 +8,12 @@ import {
 } from "../utils/AppErrors.js";
 import { SuccessResponse } from "../utils/AppResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadFiles, deleteFile } from "../services/cloudinary.js";
 
 const createProduct = asyncHandler(async (req, res) => {
   const { name, description, currentPrice, category, subcategory } = req.body;
+  const productFiles = req.files; // Assuming files are sent as multipart/form-data
+
   if (
     [name, description, currentPrice, category, subcategory].some(
       (field) => !field || field === ""
@@ -21,15 +24,63 @@ const createProduct = asyncHandler(async (req, res) => {
     );
   }
 
+  let storeFileMetadata;
+
+  if (productFiles?.length > 0) {
+    const results = await Promise.allSettled(
+      productFiles.map((file) => uploadFiles(file.path))
+    );
+
+    const successfullUploads = results
+      .filter((r) => r.status === "fulfilled")
+      .map((r) => r.value);
+
+    const hasFailure = results.some((r) => r.status === "rejected");
+
+    if (hasFailure) {
+      // Cleanup uploaded files from Cloudinary
+      await Promise.all(
+        successfullUploads.map((file) => deleteFile(file.public_id))
+      );
+
+      throw new InternalServerError(
+        "Failed to upload all product files, please try again"
+      );
+    }
+
+    storeFileMetadata = successfullUploads.map((file) => {
+      return {
+        // The main, direct link to the asset
+        public_url: file.secure_url,
+        // The Metadata stores the "facts" about the file
+        metadata: {
+          public_id: file.public_id,
+          resource_type: file.resource_type,
+          format: file.format,
+          bytes: file.bytes,
+          width: file.width,
+          height: file.height,
+        },
+      };
+    });
+  }
+
   const product = await Product.create({
     name,
     description,
     currentPrice,
     category,
     subcategory,
+    uploadedfile: storeFileMetadata ?? [],
   });
 
   if (!product) {
+    // Cleanup uploaded files from Cloudinary if product creation fails
+    if (storeFileMetadata) {
+      await Promise.all(
+        storeFileMetadata.map((file) => deleteFile(file.metadata.public_id))
+      );
+    }
     throw new InternalServerError("Failed to create product");
   }
 
@@ -40,6 +91,12 @@ const createProduct = asyncHandler(async (req, res) => {
   });
   if (!priceHistory) {
     product.deleteOne(); // Rollback product creation
+    // Cleanup uploaded files from Cloudinary if price history creation fails
+    if (storeFileMetadata) {
+      await Promise.all(
+        storeFileMetadata.map((file) => deleteFile(file.metadata.public_id))
+      );
+    }
     throw new InternalServerError("Failed to create price history");
   }
 

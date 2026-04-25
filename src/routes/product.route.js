@@ -7,12 +7,17 @@ import {
   getProductById,
 } from "../controllers/product.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.route("/create").post(verifyJWT, createProduct);
-router.route("/update/:productId").put(verifyJWT, updateProduct);
-router.route("/update-price/:productId").put(verifyJWT, updateProductPrice);
-router.route("/:productId").get(getProductById);
+router
+  .route("/create")
+  .post(verifyJWT, upload.array("productFiles", 5), createProduct);
+router.route("/update/:productId").put(verifyJWT, upload.none(), updateProduct);
+router
+  .route("/update-price/:productId")
+  .put(verifyJWT, upload.none(), updateProductPrice);
+router.route("/:productId").get(getProductById, upload.none());
 
 export default router;
