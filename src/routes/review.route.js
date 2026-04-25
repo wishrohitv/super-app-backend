@@ -19,5 +19,6 @@ router.post(
 );
 
 router.put("/update/:reviewId", verifyJWT, upload.none(), updateReview);
+router.get("/:reviewId", upload.none(), getReviewById);
 
 export default router;

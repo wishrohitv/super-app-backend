@@ -153,7 +153,21 @@ const updateReview = asyncHandler(async (req, res) => {
     );
 });
 const getAllReviews = asyncHandler(async (req, res) => {});
-const getReviewById = asyncHandler(async (req, res) => {});
+const getReviewById = asyncHandler(async (req, res) => {
+  const { reviewId } = req.params;
+
+  const review = await Review.findById(reviewId).populate(
+    "userId",
+    "name avatar username"
+  );
+  if (!review) {
+    throw new NotFoundError("Review not found");
+  }
+
+  res
+    .status(200)
+    .json(new SuccessResponse(200, review, "Review retrieved successfully"));
+});
 const deleteReview = asyncHandler(async (req, res) => {});
 
 export {
