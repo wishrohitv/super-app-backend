@@ -206,14 +206,9 @@ const reviewVote = asyncHandler(async (req, res) => {
       statusCode = 200;
       message = "Downvote removed successfully";
     } else {
-      // Delete existing vote
-      await existingVote.deleteOne();
       // Create new vote
-      newVote = await ReviewVote.create({
-        reviewId,
-        userId,
-        vote: voteType === "upvote" ? 1 : -1,
-      });
+      existingVote.vote = voteType === "upvote" ? 1 : -1;
+      newVote = await existingVote.save();
       statusCode = 201;
       message =
         voteType === "upvote"
