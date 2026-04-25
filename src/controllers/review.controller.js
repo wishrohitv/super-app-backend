@@ -10,7 +10,7 @@ import {
 import { SuccessResponse } from "../utils/AppResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import mongoose from "mongoose";
-import { deleteFile, uploadFiles } from "../services/cloudinary.js";
+import { deleteFile, uploadFile } from "../services/cloudinary.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const createReview = asyncHandler(async (req, res) => {
@@ -31,7 +31,7 @@ const createReview = asyncHandler(async (req, res) => {
 
   if (reviewFiles?.length > 0) {
     const results = await Promise.allSettled(
-      reviewFiles.map((file) => uploadFiles(file.path))
+      reviewFiles.map((file) => uploadFile(file.path))
     );
 
     const successfullUploads = results

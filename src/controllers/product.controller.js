@@ -8,7 +8,7 @@ import {
 } from "../utils/AppErrors.js";
 import { SuccessResponse } from "../utils/AppResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadFiles, deleteFile } from "../services/cloudinary.js";
+import { uploadFile, deleteFile } from "../services/cloudinary.js";
 
 const createProduct = asyncHandler(async (req, res) => {
   const { name, description, currentPrice, category, subcategory } = req.body;
@@ -28,7 +28,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
   if (productFiles?.length > 0) {
     const results = await Promise.allSettled(
-      productFiles.map((file) => uploadFiles(file.path))
+      productFiles.map((file) => uploadFile(file.path))
     );
 
     const successfullUploads = results

@@ -5,7 +5,7 @@ cloudinary.config({
   secure: true,
 });
 
-const uploadFiles = async (filePath) => {
+const uploadFile = async (filePath) => {
   if (!filePath) throw new Error("File path is required for upload");
   // Use the uploaded file's name as the asset's public ID and
   // allow overwriting the asset with new versions
@@ -37,4 +37,4 @@ const deleteFile = async (publicId) => {
   }
 };
 
-export { uploadFiles, deleteFile };
+export { uploadFile, deleteFile };
