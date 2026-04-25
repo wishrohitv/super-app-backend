@@ -30,6 +30,7 @@ import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
 import productRouter from "./routes/product.route.js";
 import reviewRouter from "./routes/review.route.js";
+import companyRouter from "./routes/company.route.js";
 
 // Register routes
 app.use("/api/v1/auth", authRouter);
@@ -39,5 +40,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 
 app.use("/api/v1/reviews", reviewRouter);
+
+app.use("/api/v1/company", companyRouter);
 
 export default app;
