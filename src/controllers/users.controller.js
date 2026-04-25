@@ -98,7 +98,36 @@ const updateUserEmail = asyncHandler(async (req, res) => {});
 
 const updateUserPassword = asyncHandler(async (req, res) => {});
 
-const updateUsername = asyncHandler(async (req, res) => {});
+const updateUsername = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { username } = req.body;
+
+  if (!username) {
+    throw new BadRequestError("Username is required");
+  }
+
+  const existingUser = await User.findById(userId);
+
+  if (!existingUser) {
+    throw new NotFoundError("User not found");
+  }
+
+  const usernameTaken = await User.findOne({
+    username,
+  });
+  if (usernameTaken) {
+    throw new ConflictError("Username is already taken");
+  }
+
+  existingUser.username = username;
+  await existingUser.save();
+
+  res
+    .status(200)
+    .json(
+      new SuccessResponse(200, existingUser, "Username updated successfully")
+    );
+});
 
 export {
   userProfile,
