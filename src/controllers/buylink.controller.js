@@ -70,6 +70,13 @@ const updateBuyLink = asyncHandler(async (req, res) => {
     throw new NotFoundError("Buy link not found");
   }
 
+  if (
+    buyLink.url === url ||
+    buyLink.companyId.toString() === companyId.toString()
+  ) {
+    throw new BadRequestError("No changes detected in the buy link");
+  }
+
   if (buyLink.authorId.toString() !== userId.toString()) {
     throw new BadRequestError("You are not authorized to update this buy link");
   }
