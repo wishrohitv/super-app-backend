@@ -13,9 +13,9 @@ const router = Router();
 
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
-router.route("/refresh-token").get(refreshToken);
+router.route("/refresh-token").post(refreshToken);
 router.route("/oauth/google").get(oAuthGoogle);
 router.route("/oauth/google/callback").get(oAuthCallback);
-router.route("/get-user").get(verifyJWT, getCurrentUser);
+router.route("/me").get(verifyJWT, getCurrentUser);
 
 export default router;

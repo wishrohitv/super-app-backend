@@ -11,10 +11,15 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.route("/:username").get(userProfile);
+
+// Update logged-in user's avatar image
 router
-  .route("/update-avatar")
+  .route("/me/avatar")
   .put(verifyJWT, upload.single("avatarFiles"), updateUserAvatar);
-router.route("/update-profile").put(verifyJWT, updateUserProfile);
-router.route("/update-username").put(verifyJWT, updateUsername);
+
+// Update logged-in user's profile
+router.route("/me/profile").put(verifyJWT, updateUserProfile);
+// Update logged-in user's username
+router.route("/me/username").put(verifyJWT, updateUsername);
 
 export default router;

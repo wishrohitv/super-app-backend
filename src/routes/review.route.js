@@ -13,14 +13,14 @@ import {
 const router = Router();
 
 router.post(
-  "/create/:productId",
+  "/:productId",
   verifyJWT,
   upload.array("reviewFiles", 5),
   createReview
 );
 
-router.put("/update/:reviewId", verifyJWT, upload.none(), updateReview);
+router.put("/:reviewId", verifyJWT, upload.none(), updateReview);
 router.get("/:reviewId", upload.none(), getReviewById);
-router.post("/vote/:reviewId", verifyJWT, upload.none(), reviewVote);
+router.post("/:reviewId/vote", verifyJWT, upload.none(), reviewVote);
 
 export default router;

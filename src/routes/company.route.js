@@ -9,10 +9,10 @@ import { upload } from "../middlewares/multer.middleware.js";
 const router = Router();
 
 router
-  .route("/create")
+  .route("/")
   .post(verifyJWT, upload.single("logoFiles"), createCompany);
 router
-  .route("/update/:companyId")
+  .route("/:companyId")
   .put(verifyJWT, upload.single("logoFiles"), updateCompany);
 
 export default router;
