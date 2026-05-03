@@ -11,6 +11,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadFile, deleteFile } from "../services/cloudinary.js";
 
 const createProduct = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
   const { name, description, currentPrice, category, subcategory } = req.body;
   const productFiles = req.files; // Assuming files are sent as multipart/form-data
 
@@ -72,6 +73,7 @@ const createProduct = asyncHandler(async (req, res) => {
     category,
     subcategory,
     uploadedfile: storeFileMetadata ?? [],
+    authorId: userId,
   });
 
   if (!product) {
