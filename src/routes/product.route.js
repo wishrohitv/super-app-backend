@@ -12,11 +12,11 @@ import { upload } from "../middlewares/multer.middleware.js";
 const router = Router();
 
 router
-  .route("/create")
+  .route("/")
   .post(verifyJWT, upload.array("productFiles", 5), createProduct);
 router.route("/update/:productId").put(verifyJWT, upload.none(), updateProduct);
 router
-  .route("/update-price/:productId")
+  .route("/:productId/price")
   .put(verifyJWT, upload.none(), updateProductPrice);
 router.route("/:productId").get(getProductById, upload.none());
 
