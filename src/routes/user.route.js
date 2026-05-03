@@ -15,11 +15,11 @@ router.route("/:username").get(userProfile);
 // Update logged-in user's avatar image
 router
   .route("/me/avatar")
-  .put(verifyJWT, upload.single("avatarFiles"), updateUserAvatar);
+  .patch(verifyJWT, upload.single("avatarFiles"), updateUserAvatar);
 
 // Update logged-in user's profile
-router.route("/me/profile").put(verifyJWT, updateUserProfile);
+router.route("/me/profile").patch(verifyJWT, updateUserProfile);
 // Update logged-in user's username
-router.route("/me/username").put(verifyJWT, updateUsername);
+router.route("/me/username").patch(verifyJWT, updateUsername);
 
 export default router;
